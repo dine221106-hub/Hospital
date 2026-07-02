@@ -53,7 +53,7 @@ public class Controlador {
 
     // Guardar Registro
     public boolean guardarRegistro(String nombre,String alergias,String observaciones,String diagnostico,String salida){
-        Paciente paciente = buscarRegistro(nombre);
+        Paciente paciente = buscarPaciente(nombre);
         if(paciente == null){
             return false;
         }
@@ -64,33 +64,24 @@ public class Controlador {
         return true;
     }
 
-    // Buscar Registro
-    public Paciente buscarRegistro(String nombreCompleto){
-        return buscarPaciente(nombreCompleto);
-    }
-    
-    // Buscar Egreso
-    public Paciente buscarEgreso(String nombreCompleto){
-        Paciente paciente = buscarPaciente(nombreCompleto);
-
-        if(paciente == null){
-            return null;
-        }
-        if(paciente.getSalida()==null){
-            return null;
-        }
-        if(paciente.getSalida().equalsIgnoreCase("Alta")){
-            return paciente;
-        }
-        return null;
-    }
-    
     // Guardar egreso
     public boolean guardarEgreso(String nombre, String observacion){
-        Paciente paciente = buscarEgreso(nombre);
-        if(paciente == null){
+        Paciente paciente = buscarPaciente(nombre);
+
+        if (paciente == null) {
             return false;
         }
+
+        if (!paciente.getSalida().equalsIgnoreCase("Alta")) {
+            return false;
+        }
+
+        if (paciente.getFechaEgreso() != null
+                && !paciente.getFechaEgreso().trim().equals("")) {
+            return false;
+        }
+
+        paciente.setFechaEgreso(convertirFecha(new Date()));
         paciente.setHoraEgreso(horaActual());
         paciente.setObservacionesEgreso(observacion);
         return true;
@@ -98,7 +89,6 @@ public class Controlador {
     
     // Mostrar Pacientes
     public DefaultTableModel mostrarPacientes() {
-
         DefaultTableModel modelo = new DefaultTableModel();
 
         modelo.addColumn("Nombre");
@@ -114,16 +104,14 @@ public class Controlador {
         modelo.addColumn("Observaciones");
         modelo.addColumn("Diagnóstico");
         modelo.addColumn("Salida");
+        modelo.addColumn("Fecha Egreso");
         modelo.addColumn("Hora Egreso");
         modelo.addColumn("Obs. Egreso");
 
         Paciente p = new Paciente();
-
         ArrayList<Paciente> lista = p.ver(listaPacientes);
-
         for (Paciente paciente : lista) {
-
-            Object datos[] = new Object[15];
+            Object datos[] = new Object[16];
 
             datos[0] = paciente.getNombre();
             datos[1] = paciente.getApellidoPaterno();
@@ -138,9 +126,9 @@ public class Controlador {
             datos[10] = paciente.getObservaciones();
             datos[11] = paciente.getDiagnostico();
             datos[12] = paciente.getSalida();
-            datos[13] = paciente.getHoraEgreso();
-            datos[14] = paciente.getObservacionesEgreso();
-
+            datos[13] = paciente.getFechaEgreso();
+            datos[14] = paciente.getHoraEgreso();
+            datos[15] = paciente.getObservacionesEgreso();
             modelo.addRow(datos);
 
         }
@@ -205,16 +193,14 @@ public class Controlador {
         modelo.addColumn("Observaciones");
         modelo.addColumn("Diagnóstico");
         modelo.addColumn("Salida");
+        modelo.addColumn("Fecha Egreso");
         modelo.addColumn("Hora Egreso");
         modelo.addColumn("Obs. Egreso");
 
         for(Paciente paciente : listaPacientes){
-
             String nombre = paciente.getNombre()+" " + paciente.getApellidoPaterno()+" "+ paciente.getApellidoMaterno();
-
             if(nombre.equalsIgnoreCase(nombreCompleto)){
-
-                Object datos[] = new Object[15];
+                Object datos[] = new Object[16];
 
                 datos[0]=paciente.getNombre();
                 datos[1]=paciente.getApellidoPaterno();
@@ -229,12 +215,32 @@ public class Controlador {
                 datos[10]=paciente.getObservaciones();
                 datos[11]=paciente.getDiagnostico();
                 datos[12]=paciente.getSalida();
-                datos[13]=paciente.getHoraEgreso();
-                datos[14]=paciente.getObservacionesEgreso();
+                datos[13]=paciente.getFechaEgreso();
+                datos[14]=paciente.getHoraEgreso();
+                datos[15]=paciente.getObservacionesEgreso();
 
                 modelo.addRow(datos);
             }
         }
         return modelo;
+    }
+    
+    public ArrayList<String> obtenerNombresPacientes() {
+        ArrayList<String> nombres = new ArrayList<>();
+        for (Paciente p : listaPacientes) {
+            nombres.add(p.getNombre() + " "+ p.getApellidoPaterno() + " "+ p.getApellidoMaterno());
+        }
+        return nombres;
+    }
+    
+    public ArrayList<String> filtrarPacientes(String texto) {
+        ArrayList<String> lista = new ArrayList<>();
+        for (Paciente p : listaPacientes) {
+            String nombre = p.getNombre() + " " + p.getApellidoPaterno() + " " + p.getApellidoMaterno();
+            if (nombre.toLowerCase().contains(texto.toLowerCase())) {
+                lista.add(nombre);
+            }
+        }
+        return lista;
     }
 }

@@ -19,6 +19,7 @@ public class Paciente {
     private String diagnostico;
     private String salida;
 
+    private String fechaEgreso;
     private String horaEgreso;
     private String observacionesEgreso;
 
@@ -79,6 +80,10 @@ public class Paciente {
         return salida;
     }
 
+    public String getFechaEgreso() {
+        return fechaEgreso;
+    }
+    
     public String getHoraEgreso() {
         return horaEgreso;
     }
@@ -139,6 +144,10 @@ public class Paciente {
         this.salida = salida;
     }
 
+    public void setFechaEgreso(String fechaEgreso) {
+        this.fechaEgreso = fechaEgreso;
+    }
+    
     public void setHoraEgreso(String horaEgreso) {
         this.horaEgreso = horaEgreso;
     }
@@ -147,7 +156,6 @@ public class Paciente {
         this.observacionesEgreso = observacionesEgreso;
     }
 
-    // Metodo crear y ver
     public void crear(ArrayList<Paciente> lista) {
         lista.add(this);
 

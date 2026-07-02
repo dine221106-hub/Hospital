@@ -4,9 +4,11 @@
  */
 package U1_P6;
 
-import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 
 /**
@@ -17,21 +19,75 @@ public class Practica extends javax.swing.JFrame {
     
     private Controlador controlador = new Controlador();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Practica.class.getName());
-
+    private boolean cargando = false;
     /**
      * Creates new form Practica
      */
     public Practica() {
         initComponents();
+        cargarPacientes();
         txtEdad.setEditable(false);
         txtHoraIngreso.setEditable(false);
+        java.util.Date hoy = new java.util.Date();
+        jdIngreso.setDate(hoy);
+        jdIngreso.setMinSelectableDate(hoy);
+        jdIngreso.setMaxSelectableDate(hoy);
+        jdEgreso.setEnabled(false);
         txtHoraEgreso2.setEditable(false);
-        this.setLayout(new java.awt.BorderLayout());
+        cbBuscarRegistro.setEditable(true);
+        cbBuscarEgreso.setEditable(true);
+        cbBuscarVista.setEditable(true);
         this.setLocationRelativeTo(null);
-        setResizable(true);
+        configurarBuscador(cbBuscarRegistro);
+        configurarBuscador(cbBuscarEgreso);
+        configurarBuscador(cbBuscarVista);
+    }
+    
+    private void cargarPacientes() {
+        cargando = true;
+        cbBuscarRegistro.removeAllItems();
+        cbBuscarEgreso.removeAllItems();
+        cbBuscarVista.removeAllItems();
+        for (String nombre : controlador.obtenerNombresPacientes()) {
+            cbBuscarRegistro.addItem(nombre);
+            cbBuscarEgreso.addItem(nombre);
+            cbBuscarVista.addItem(nombre);
+        }
+        cbBuscarRegistro.setSelectedIndex(-1);
+        cbBuscarRegistro.getEditor().setItem("");
+        cbBuscarEgreso.setSelectedIndex(-1);
+        cbBuscarEgreso.getEditor().setItem("");
+        cbBuscarVista.setSelectedIndex(-1);
+        cbBuscarVista.getEditor().setItem("");
+        cargando = false;
+    }
+    
+    private void filtrar(JComboBox<String> combo, String texto) {
+        cargando = true;
+        combo.removeAllItems();
+        for (String nombre : controlador.filtrarPacientes(texto)) {
+            combo.addItem(nombre);
+        }
+        combo.setSelectedItem(null);
+        combo.getEditor().setItem(texto);
+        cargando = false;
+        if (combo.getItemCount() > 0) {
+            combo.setPopupVisible(true);   
+        } else {
+            combo.setPopupVisible(false); 
+        }
+    }
+    
+    private void configurarBuscador(JComboBox<String> combo) {
+        JTextField txt = (JTextField) combo.getEditor().getEditorComponent();
+        txt.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                filtrar(combo, txt.getText());
+            }
+        });
     }
 
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -40,6 +96,7 @@ public class Practica extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
@@ -65,6 +122,7 @@ public class Practica extends javax.swing.JFrame {
         txtHoraIngreso = new javax.swing.JTextField();
         btnGuardarIngreso = new javax.swing.JButton();
         jdIngreso = new com.toedter.calendar.JDateChooser();
+        jLabel19 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
@@ -78,10 +136,10 @@ public class Practica extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         btnGuardarRegistro = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
-        txtBuscarRegistro = new javax.swing.JTextField();
-        btnBuscarRegistro = new javax.swing.JButton();
         rbAlta = new javax.swing.JRadioButton();
         rbHospitalizacion = new javax.swing.JRadioButton();
+        jLabel21 = new javax.swing.JLabel();
+        cbBuscarRegistro = new javax.swing.JComboBox<>();
         jPanel3 = new javax.swing.JPanel();
         txtHoraEgreso = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
@@ -89,338 +147,505 @@ public class Practica extends javax.swing.JFrame {
         txtObservacionEgreso = new javax.swing.JTextArea();
         btnDarAlta = new javax.swing.JButton();
         jLabel16 = new javax.swing.JLabel();
-        txtBuscarEgreso = new javax.swing.JTextField();
-        btnBuscarEgreso = new javax.swing.JButton();
         txtHoraEgreso2 = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+        cbBuscarEgreso = new javax.swing.JComboBox<>();
+        jLabel22 = new javax.swing.JLabel();
+        jdEgreso = new com.toedter.calendar.JDateChooser();
         jPanel4 = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
         jScrollPane7 = new javax.swing.JScrollPane();
         tblPacientes = new javax.swing.JTable();
-        jLabel17 = new javax.swing.JLabel();
-        txtBuscarVista = new javax.swing.JTextField();
-        btnBuscarVista = new javax.swing.JButton();
+        cbBuscarVista = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jPanel1.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("Nombre:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 157, 0, 0);
+        jPanel1.add(jLabel1, gridBagConstraints);
 
         jLabel2.setText("Apellido Paterno:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 157, 0, 0);
+        jPanel1.add(jLabel2, gridBagConstraints);
 
         jLabel3.setText("Apellido Materno:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 157, 0, 0);
+        jPanel1.add(jLabel3, gridBagConstraints);
 
         jLabel4.setText("Genero:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 157, 0, 0);
+        jPanel1.add(jLabel4, gridBagConstraints);
 
         jLabel5.setText("Fecha de nacimiento:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridwidth = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 157, 0, 0);
+        jPanel1.add(jLabel5, gridBagConstraints);
 
         jLabel6.setText("Edad:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 156, 0, 0);
+        jPanel1.add(jLabel6, gridBagConstraints);
 
         jLabel7.setText("Peso:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 156, 0, 0);
+        jPanel1.add(jLabel7, gridBagConstraints);
 
         jLabel8.setText("Fecha de Ingreso:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 156, 0, 0);
+        jPanel1.add(jLabel8, gridBagConstraints);
 
         jLabel9.setText("Hora de Ingreso:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(15, 156, 0, 0);
+        jPanel1.add(jLabel9, gridBagConstraints);
 
-        txtNombre.addActionListener(this::txtNombreActionPerformed);
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtNombreKeyTyped(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 180;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        jPanel1.add(txtNombre, gridBagConstraints);
 
-        txtApellidoPaterno.addActionListener(this::txtApellidoPaternoActionPerformed);
         txtApellidoPaterno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtApellidoPaternoKeyTyped(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 182;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        jPanel1.add(txtApellidoPaterno, gridBagConstraints);
 
-        txtApellidoMaterno.addActionListener(this::txtApellidoMaternoActionPerformed);
         txtApellidoMaterno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtApellidoMaternoKeyTyped(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 6;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 182;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        jPanel1.add(txtApellidoMaterno, gridBagConstraints);
 
         cboGenero.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccionar", "Femenino", "Masculino", " " }));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 96;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        jPanel1.add(cboGenero, gridBagConstraints);
 
         jdNacimiento.addPropertyChangeListener(this::jdNacimientoPropertyChange);
-
-        txtEdad.addActionListener(this::txtEdadActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.ipadx = 108;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 18, 0, 0);
+        jPanel1.add(jdNacimiento, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        jPanel1.add(txtEdad, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 20;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(15, 18, 0, 0);
+        jPanel1.add(txtPeso, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 15;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 117;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 18, 0, 0);
+        jPanel1.add(txtHoraIngreso, gridBagConstraints);
 
         btnGuardarIngreso.setText("Guardar");
         btnGuardarIngreso.addActionListener(this::btnGuardarIngresoActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 17;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 54, 0);
+        jPanel1.add(btnGuardarIngreso, gridBagConstraints);
 
         jdIngreso.addPropertyChangeListener(this::jdIngresoPropertyChange);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.ipadx = 108;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 18, 0, 0);
+        jPanel1.add(jdIngreso, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4))
-                        .addGap(30, 30, 30)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(btnGuardarIngreso)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtNombre)
-                                    .addComponent(txtApellidoPaterno)
-                                    .addComponent(txtApellidoMaterno, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jdNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtEdad)
-                            .addComponent(txtPeso)
-                            .addComponent(txtHoraIngreso)
-                            .addComponent(jdIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(271, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtApellidoPaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtApellidoMaterno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(cboGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jdNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtEdad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtPeso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jdIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(txtHoraIngreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-                .addComponent(btnGuardarIngreso)
-                .addGap(20, 20, 20))
-        );
+        jLabel19.setFont(new java.awt.Font("Shirt & Tie Demo", 0, 48)); // NOI18N
+        jLabel19.setText("INGRESO DE PACIENTES");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(27, 173, 0, 118);
+        jPanel1.add(jLabel19, gridBagConstraints);
 
         jTabbedPane1.addTab("Ingreso", jPanel1);
 
+        jPanel2.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
         jLabel12.setText("Alergias:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(43, 42, 0, 0);
+        jPanel2.add(jLabel12, gridBagConstraints);
 
         jLabel13.setText("Observaciones:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(16, 42, 0, 0);
+        jPanel2.add(jLabel13, gridBagConstraints);
 
         jLabel14.setText("Diagnostico");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(13, 42, 0, 0);
+        jPanel2.add(jLabel14, gridBagConstraints);
 
         txtAlergias.setColumns(20);
         txtAlergias.setRows(5);
         jScrollPane2.setViewportView(txtAlergias);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 367;
+        gridBagConstraints.ipady = 58;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 157);
+        jPanel2.add(jScrollPane2, gridBagConstraints);
+
         txtObservaciones.setColumns(20);
         txtObservaciones.setRows(5);
         jScrollPane3.setViewportView(txtObservaciones);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 367;
+        gridBagConstraints.ipady = 59;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 157);
+        jPanel2.add(jScrollPane3, gridBagConstraints);
 
         txtDiagnostico.setColumns(20);
         txtDiagnostico.setRows(5);
         jScrollPane4.setViewportView(txtDiagnostico);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 367;
+        gridBagConstraints.ipady = 52;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 157);
+        jPanel2.add(jScrollPane4, gridBagConstraints);
+
         jLabel15.setText("Salida:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 42, 0, 0);
+        jPanel2.add(jLabel15, gridBagConstraints);
 
         btnGuardarRegistro.setText("Guardar");
         btnGuardarRegistro.addActionListener(this::btnGuardarRegistroActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 99, 40, 0);
+        jPanel2.add(btnGuardarRegistro, gridBagConstraints);
 
         jLabel10.setText("Buscar");
-
-        txtBuscarRegistro.addActionListener(this::txtBuscarRegistroActionPerformed);
-
-        btnBuscarRegistro.setText("Buscar");
-        btnBuscarRegistro.addActionListener(this::btnBuscarRegistroActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(24, 42, 0, 0);
+        jPanel2.add(jLabel10, gridBagConstraints);
 
         buttonGroup1.add(rbAlta);
         rbAlta.setText("Alta");
-        rbAlta.addActionListener(this::rbAltaActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        jPanel2.add(rbAlta, gridBagConstraints);
 
         buttonGroup1.add(rbHospitalizacion);
         rbHospitalizacion.setText("Hospitalización");
-        rbHospitalizacion.addActionListener(this::rbHospitalizacionActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 18, 0, 0);
+        jPanel2.add(rbHospitalizacion, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel10))
-                        .addGap(53, 53, 53)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane2)
-                            .addComponent(txtBuscarRegistro))
-                        .addGap(29, 29, 29)
-                        .addComponent(btnBuscarRegistro))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(42, 42, 42)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel14)
-                                    .addComponent(jLabel15))
-                                .addGap(35, 35, 35))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel13)
-                                .addGap(26, 26, 26)))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rbAlta)
-                            .addComponent(rbHospitalizacion))))
-                .addContainerGap(134, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnGuardarRegistro)
-                .addGap(209, 209, 209))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(txtBuscarRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscarRegistro))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabel12)))
-                .addGap(17, 17, 17)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13))
-                .addGap(21, 21, 21)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel15)
-                        .addGap(75, 75, 75))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(rbAlta)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(rbHospitalizacion)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                        .addComponent(btnGuardarRegistro)
-                        .addContainerGap())))
-        );
+        jLabel21.setFont(new java.awt.Font("Shirt & Tie Demo", 0, 48)); // NOI18N
+        jLabel21.setText("REGISTRO DE PACIENTE");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 18, 0, 157);
+        jPanel2.add(jLabel21, gridBagConstraints);
+
+        cbBuscarRegistro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " " }));
+        cbBuscarRegistro.addActionListener(this::cbBuscarRegistroActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 306;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 18, 0, 0);
+        jPanel2.add(cbBuscarRegistro, gridBagConstraints);
 
         jTabbedPane1.addTab("Registro", jPanel2);
 
+        jPanel3.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
         txtHoraEgreso.setText("Hora de Egreso:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 28, 0, 0);
+        jPanel3.add(txtHoraEgreso, gridBagConstraints);
 
         jLabel11.setText("Observaciones:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 31, 0, 0);
+        jPanel3.add(jLabel11, gridBagConstraints);
 
         txtObservacionEgreso.setColumns(20);
         txtObservacionEgreso.setRows(5);
         jScrollPane1.setViewportView(txtObservacionEgreso);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 345;
+        gridBagConstraints.ipady = 150;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 185);
+        jPanel3.add(jScrollPane1, gridBagConstraints);
+
         btnDarAlta.setText("Dar de alta");
         btnDarAlta.addActionListener(this::btnDarAltaActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(33, 24, 61, 0);
+        jPanel3.add(btnDarAlta, gridBagConstraints);
 
         jLabel16.setText("Buscar:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(21, 28, 0, 0);
+        jPanel3.add(jLabel16, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 81;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        jPanel3.add(txtHoraEgreso2, gridBagConstraints);
 
-        btnBuscarEgreso.setText("Buscar");
-        btnBuscarEgreso.addActionListener(this::btnBuscarEgresoActionPerformed);
+        jLabel20.setFont(new java.awt.Font("Shirt & Tie Demo", 0, 48)); // NOI18N
+        jLabel20.setText("EGRESO DE PACIENTE");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.ipadx = 13;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(39, 13, 0, 0);
+        jPanel3.add(jLabel20, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtHoraEgreso)
-                                    .addComponent(jLabel16))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtBuscarEgreso)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(txtHoraEgreso2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE)))))
-                        .addGap(42, 42, 42)
-                        .addComponent(btnBuscarEgreso))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(169, 169, 169)
-                        .addComponent(btnDarAlta)))
-                .addContainerGap(144, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(txtBuscarEgreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscarEgreso))
-                .addGap(13, 13, 13)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtHoraEgreso)
-                    .addComponent(txtHoraEgreso2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(59, 59, 59)
-                .addComponent(btnDarAlta)
-                .addContainerGap(132, Short.MAX_VALUE))
-        );
+        cbBuscarEgreso.addActionListener(this::cbBuscarEgresoActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 289;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(19, 18, 0, 185);
+        jPanel3.add(cbBuscarEgreso, gridBagConstraints);
+
+        jLabel22.setText("Fecha de Egreso:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(24, 28, 0, 0);
+        jPanel3.add(jLabel22, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.ipadx = 63;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 18, 0, 0);
+        jPanel3.add(jdEgreso, gridBagConstraints);
 
         jTabbedPane1.addTab("Egreso", jPanel3);
+
+        jPanel4.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel4.setLayout(new java.awt.GridBagLayout());
+
+        jLabel17.setText("Buscar:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(40, 58, 0, 0);
+        jPanel4.add(jLabel17, gridBagConstraints);
+
+        jLabel18.setFont(new java.awt.Font("Shirt & Tie Demo", 0, 48)); // NOI18N
+        jLabel18.setText("LISTA DE PACIENTES");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(46, 72, 0, 0);
+        jPanel4.add(jLabel18, gridBagConstraints);
 
         tblPacientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -435,161 +660,128 @@ public class Practica extends javax.swing.JFrame {
         ));
         jScrollPane7.setViewportView(tblPacientes);
 
-        jScrollPane5.setViewportView(jScrollPane7);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 567;
+        gridBagConstraints.ipady = 258;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(18, 58, 60, 39);
+        jPanel4.add(jScrollPane7, gridBagConstraints);
 
-        jLabel17.setText("Buscar:");
-
-        btnBuscarVista.setText("Buscar");
-        btnBuscarVista.addActionListener(this::btnBuscarVistaActionPerformed);
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 586, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(jLabel17)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtBuscarVista, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnBuscarVista)))
-                .addContainerGap(17, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(30, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(txtBuscarVista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscarVista))
-                .addGap(24, 24, 24)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35))
-        );
+        cbBuscarVista.addActionListener(this::cbBuscarVistaActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 455;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(37, 18, 0, 39);
+        jPanel4.add(cbBuscarVista, gridBagConstraints);
 
         jTabbedPane1.addTab("Vista", jPanel4);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 609, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = -438;
+        gridBagConstraints.ipady = -419;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        getContentPane().add(jTabbedPane1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnBuscarEgresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarEgresoActionPerformed
-        Paciente paciente = controlador.buscarEgreso(txtBuscarEgreso.getText());
-        if (paciente == null) {
-            JOptionPane.showMessageDialog(this,"El paciente no puede egresar.");
-            return;
-        }
-        txtHoraEgreso2.setText(controlador.horaActual());
-        txtObservacionEgreso.setText("");
-    }//GEN-LAST:event_btnBuscarEgresoActionPerformed
-
-    private void txtBuscarRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarRegistroActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscarRegistroActionPerformed
-
-    private void rbAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbAltaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rbAltaActionPerformed
-
-    private void rbHospitalizacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbHospitalizacionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rbHospitalizacionActionPerformed
-
-    private void btnBuscarRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarRegistroActionPerformed
-        Paciente paciente = controlador.buscarRegistro(txtBuscarRegistro.getText());
-
-        if (paciente == null) {
-            JOptionPane.showMessageDialog(this,"Paciente no encontrado");
-            return;
-        }
-        txtAlergias.setText(paciente.getAlergias());
-        txtObservaciones.setText(paciente.getObservaciones());
-        txtDiagnostico.setText(paciente.getDiagnostico());
-        if (paciente.getSalida() != null) {
-            if (paciente.getSalida().equalsIgnoreCase("Alta")) {
-                rbAlta.setSelected(true);
-            } else {
-            rbHospitalizacion.setSelected(true);
-            }
-        }
-    }//GEN-LAST:event_btnBuscarRegistroActionPerformed
-
     private void btnGuardarRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarRegistroActionPerformed
-        String salida = "";
-        if (rbAlta.isSelected()) {
-            salida = "Alta";
-        }
-        if (rbHospitalizacion.isSelected()) {
-            salida = "Hospitalización";
-        }
-        if (salida.equals("")) {
-            JOptionPane.showMessageDialog(this,"Seleccione la salida");
-            return;
-        }
-        boolean guardar = controlador.guardarRegistro(
-                txtBuscarRegistro.getText(),
-                txtAlergias.getText(),
-                txtObservaciones.getText(),
-                txtDiagnostico.getText(),
-                salida);
+        try {
+            String salida;
+            if (rbAlta.isSelected()) {
+                salida = "Alta";
+            } else if (rbHospitalizacion.isSelected()) {
+                salida = "Hospitalización";
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione la salida.");
+                return;
+            }
+            if (cbBuscarRegistro.getSelectedItem() == null) {
+                JOptionPane.showMessageDialog(this, "Seleccione un paciente.");
+                return;
+            }
 
-        if (guardar) {
-            JOptionPane.showMessageDialog(this,"Registro guardado");
-            txtBuscarRegistro.setText("");
-            txtAlergias.setText("");
-            txtObservaciones.setText("");
-            txtDiagnostico.setText("");
-            buttonGroup1.clearSelection();
-            tblPacientes.setModel(controlador.mostrarPacientes());
-        } else {
-            JOptionPane.showMessageDialog(this,"Paciente no encontrado");
+            boolean guardar = controlador.guardarRegistro(
+                    cbBuscarRegistro.getSelectedItem().toString(),
+                    txtAlergias.getText(),
+                    txtObservaciones.getText(),
+                    txtDiagnostico.getText(),
+                    salida);
+            if (guardar) {
+                JOptionPane.showMessageDialog(this, "Registro guardado.");
+                cbBuscarRegistro.setSelectedIndex(-1);
+                cbBuscarRegistro.getEditor().setItem("");
+
+                txtAlergias.setText("");
+                txtObservaciones.setText("");
+                txtDiagnostico.setText("");
+
+                buttonGroup1.clearSelection();
+
+                tblPacientes.setModel(controlador.mostrarPacientes());
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Paciente no encontrado.");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Ocurrió un error al guardar el registro.");
+
         }
+
     }//GEN-LAST:event_btnGuardarRegistroActionPerformed
 
     private void btnDarAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDarAltaActionPerformed
-        if(txtObservacionEgreso.getText().trim().equals("")){
-            JOptionPane.showMessageDialog(this,"Ingrese una observación");
-            return;
-        }
-        boolean alta = controlador.guardarEgreso(
-                txtBuscarEgreso.getText(),
-                txtObservacionEgreso.getText()
-        );
-
-        if(alta){
-            JOptionPane.showMessageDialog(this,"Paciente dado de alta correctamente.");
-            txtBuscarEgreso.setText("");
-            txtHoraEgreso2.setText("");
-            txtObservacionEgreso.setText("");
-            tblPacientes.setModel(controlador.mostrarPacientes());
-        }else{
-            JOptionPane.showMessageDialog(this,"No se pudo dar de alta al paciente.");
+        try {
+            if (cbBuscarEgreso.getSelectedItem() == null|| cbBuscarEgreso.getSelectedIndex() == -1) {
+                JOptionPane.showMessageDialog(this, "Seleccione un paciente.");
+                return;
+            } else if (txtObservacionEgreso.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese una observación.");
+                txtObservacionEgreso.requestFocus();
+                return;
+            }
+            
+            Paciente paciente = controlador.buscarPaciente(cbBuscarEgreso.getSelectedItem().toString());
+            if (paciente == null) {
+                JOptionPane.showMessageDialog(this, "Paciente no encontrado.");
+                return;
+            } else if (paciente.getFechaEgreso() != null && !paciente.getFechaEgreso().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Este paciente ya fue dado de alta.");
+                return;
+            } else if (!paciente.getSalida().equalsIgnoreCase("Alta")) {
+                JOptionPane.showMessageDialog(this, "Este paciente está hospitalizado.");
+                return;
+            }
+            boolean alta = controlador.guardarEgreso( cbBuscarEgreso.getSelectedItem().toString(), txtObservacionEgreso.getText());
+            if (alta) {
+                JOptionPane.showMessageDialog(this, "Paciente dado de alta correctamente.");
+                cbBuscarEgreso.setSelectedIndex(-1);
+                cbBuscarEgreso.getEditor().setItem("");
+                jdEgreso.setDate(null);
+                txtHoraEgreso2.setText("");
+                txtObservacionEgreso.setText("");
+                tblPacientes.setModel(controlador.mostrarPacientes());
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo dar de alta al paciente.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,"Ocurrió un error al dar de alta al paciente.");
         }
     }//GEN-LAST:event_btnDarAltaActionPerformed
-
-    private void btnBuscarVistaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarVistaActionPerformed
-        tblPacientes.setModel(
-            controlador.buscarTabla(txtBuscarVista.getText())
-        );
-    }//GEN-LAST:event_btnBuscarVistaActionPerformed
 
     private void jdIngresoPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdIngresoPropertyChange
         if(jdIngreso.getDate()!=null){
@@ -598,79 +790,90 @@ public class Practica extends javax.swing.JFrame {
     }//GEN-LAST:event_jdIngresoPropertyChange
 
     private void btnGuardarIngresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarIngresoActionPerformed
-        if(txtNombre.getText().equals("")){
-            JOptionPane.showMessageDialog(this,"Ingrese el nombre");
-            return;
-        }
-        if(txtApellidoPaterno.getText().equals("")){
-            JOptionPane.showMessageDialog(this,"Ingrese el apellido paterno");
-            return;
-        }
-        if(txtApellidoMaterno.getText().equals("")){
-            JOptionPane.showMessageDialog(this,"Ingrese el apellido materno");
-            return;
-        }
-        if(cboGenero.getSelectedIndex()==0){
-            JOptionPane.showMessageDialog(this,"Seleccione el género");
-            return;
-        }
-        if(jdNacimiento.getDate()==null){
-            JOptionPane.showMessageDialog(this,"Seleccione la fecha de nacimiento");
-            return;
-        }
-        if(txtPeso.getText().trim().equals("")){
-            JOptionPane.showMessageDialog(this,"Ingrese el peso");
-            return;
-        }
-        double peso;
-        try{
-            peso = Double.parseDouble(txtPeso.getText());
-        }catch(NumberFormatException e){
+        try {
+            if (txtNombre.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese el nombre.");
+                txtNombre.requestFocus();
+                return;
+            } else if (txtApellidoPaterno.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese el apellido paterno.");
+                txtApellidoPaterno.requestFocus();
+                return;
+            } else if (txtApellidoMaterno.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese el apellido materno.");
+                txtApellidoMaterno.requestFocus();
+                return;
+            } else if (cboGenero.getSelectedIndex() == 0) {
+                JOptionPane.showMessageDialog(this, "Seleccione el género.");
+                cboGenero.requestFocus();
+                return;
+            } else if (jdNacimiento.getDate() == null) {
+                JOptionPane.showMessageDialog(this, "Seleccione la fecha de nacimiento.");
+                jdNacimiento.requestFocus();
+                return;
 
-            JOptionPane.showMessageDialog(this,"Peso inválido");
-            return;
-        }
-        if(jdIngreso.getDate()==null){
-            JOptionPane.showMessageDialog(this,"Seleccione la fecha de ingreso");
-            return;
-        }
-        int edad = controlador.calcularEdad(jdNacimiento.getDate());
+            } else if (txtPeso.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingrese el peso.");
+                txtPeso.requestFocus();
+                return;
+            } else if (jdIngreso.getDate() == null) {
+                JOptionPane.showMessageDialog(this, "Seleccione la fecha de ingreso.");
+                jdIngreso.requestFocus();
+                return;
+            }
+            double peso;
+            try {
+                peso = Double.parseDouble(txtPeso.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Peso inválido.");
+                txtPeso.requestFocus();
+                return;
+            }
+            int edad = controlador.calcularEdad(jdNacimiento.getDate());
+            
+            if (edad <= 0) {
+                 JOptionPane.showMessageDialog(this, "La fecha de nacimiento no es válida.");
+                 jdNacimiento.requestFocus();
+                 return;
+            }
 
-        txtEdad.setText(String.valueOf(edad));
-        String hora = controlador.horaActual();
-        txtHoraIngreso.setText(hora);
+            txtEdad.setText(String.valueOf(edad));
 
-        boolean guardado = controlador.guardarIngreso(
-            txtNombre.getText(),
-            txtApellidoPaterno.getText(),
-            txtApellidoMaterno.getText(),
-            cboGenero.getSelectedItem().toString(),
-            controlador.convertirFecha(jdNacimiento.getDate()),
-            edad,
-            peso,
-            controlador.convertirFecha(jdIngreso.getDate()),
-            hora
-        );
-        if(guardado){
-            JOptionPane.showMessageDialog(this,"Paciente guardado correctamente.");
-            txtNombre.setText("");
-            txtApellidoPaterno.setText("");
-            txtApellidoMaterno.setText("");
-            cboGenero.setSelectedIndex(0);
-            jdNacimiento.setDate(null);
-            txtEdad.setText("");
-            txtPeso.setText("");
-            jdIngreso.setDate(null);
-            txtHoraIngreso.setText("");
-            tblPacientes.setModel(controlador.mostrarPacientes());
-        }else{
-            JOptionPane.showMessageDialog(this,"Ese paciente ya existe.");
+            String hora = controlador.horaActual();
+            txtHoraIngreso.setText(hora);
+
+            boolean guardado = controlador.guardarIngreso(
+                txtNombre.getText(),
+                txtApellidoPaterno.getText(),
+                txtApellidoMaterno.getText(),
+                cboGenero.getSelectedItem().toString(),
+                controlador.convertirFecha(jdNacimiento.getDate()),
+                edad,
+                peso,
+                controlador.convertirFecha(jdIngreso.getDate()),
+                hora);
+
+            if (guardado) {
+                JOptionPane.showMessageDialog(this, "Paciente guardado correctamente.");
+                txtNombre.setText("");
+                txtApellidoPaterno.setText("");
+                txtApellidoMaterno.setText("");
+                cboGenero.setSelectedIndex(0);
+                jdNacimiento.setDate(null);
+                txtEdad.setText("");
+                txtPeso.setText("");
+                jdIngreso.setDate(null);
+                txtHoraIngreso.setText("");
+                tblPacientes.setModel(controlador.mostrarPacientes());
+                cargarPacientes();
+            } else {
+                 JOptionPane.showMessageDialog(this, "Ese paciente ya existe.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+            "Ocurrió un error al guardar el ingreso.");
         }
     }//GEN-LAST:event_btnGuardarIngresoActionPerformed
-
-    private void txtEdadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEdadActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEdadActionPerformed
 
     private void jdNacimientoPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jdNacimientoPropertyChange
         if(jdNacimiento.getDate()!=null){
@@ -680,21 +883,8 @@ public class Practica extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jdNacimientoPropertyChange
 
-    private void txtApellidoMaternoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoMaternoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtApellidoMaternoActionPerformed
-
-    private void txtApellidoPaternoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoPaternoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtApellidoPaternoActionPerformed
-
-    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNombreActionPerformed
-
     private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
         char c = evt.getKeyChar();
-
         if (!Character.isLetter(c) && c != KeyEvent.VK_SPACE
                 && c != KeyEvent.VK_BACK_SPACE
                 && c != KeyEvent.VK_DELETE) {
@@ -704,7 +894,6 @@ public class Practica extends javax.swing.JFrame {
 
     private void txtApellidoPaternoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtApellidoPaternoKeyTyped
         char c = evt.getKeyChar();
-
         if (!Character.isLetter(c) && c != KeyEvent.VK_SPACE
                 && c != KeyEvent.VK_BACK_SPACE
                 && c != KeyEvent.VK_DELETE) {
@@ -714,13 +903,120 @@ public class Practica extends javax.swing.JFrame {
 
     private void txtApellidoMaternoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtApellidoMaternoKeyTyped
         char c = evt.getKeyChar();
-
         if (!Character.isLetter(c) && c != KeyEvent.VK_SPACE
                 && c != KeyEvent.VK_BACK_SPACE
                 && c != KeyEvent.VK_DELETE) {
             evt.consume();
         }
     }//GEN-LAST:event_txtApellidoMaternoKeyTyped
+
+    private void cbBuscarVistaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbBuscarVistaActionPerformed
+        try {
+            if (cargando) {
+                return;
+            } else if (cbBuscarVista.getSelectedItem() == null || cbBuscarVista.getSelectedIndex() == -1) {
+                return;
+            }
+            Paciente paciente = controlador.buscarPaciente( cbBuscarVista.getSelectedItem().toString());
+
+            if (paciente != null) {
+                DefaultTableModel modelo = (DefaultTableModel) tblPacientes.getModel();
+                modelo.setRowCount(0);
+                modelo.addRow(new Object[]{
+                    paciente.getNombre(),
+                    paciente.getApellidoPaterno(),
+                    paciente.getApellidoMaterno(),
+                    paciente.getGenero(),
+                    paciente.getFechaNacimiento(),
+                    paciente.getEdad(),
+                    paciente.getPeso(),
+                    paciente.getFechaIngreso(),
+                    paciente.getHoraIngreso(),
+                    paciente.getAlergias(),
+                    paciente.getObservaciones(),
+                    paciente.getDiagnostico(),
+                    paciente.getSalida(),
+                    paciente.getFechaEgreso(),
+                    paciente.getHoraEgreso(),
+                    paciente.getObservacionesEgreso()
+                });
+            } else {
+                JOptionPane.showMessageDialog(this, "Paciente no encontrado.");
+            }
+
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(this, "No hay un paciente seleccionado.");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocurrió un error al realizar la búsqueda.");
+        }
+    }//GEN-LAST:event_cbBuscarVistaActionPerformed
+
+    private void cbBuscarRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbBuscarRegistroActionPerformed
+        try {
+            if (cargando) {
+                return;
+            } else if (cbBuscarRegistro.getSelectedItem() == null
+                    || cbBuscarRegistro.getSelectedIndex() == -1) {
+                return;
+            }
+            Paciente paciente = controlador.buscarPaciente( cbBuscarRegistro.getSelectedItem().toString());
+            if (paciente != null) {
+                txtAlergias.setText(paciente.getAlergias());
+                txtObservaciones.setText(paciente.getObservaciones());
+                txtDiagnostico.setText(paciente.getDiagnostico());
+                if (paciente.getSalida() != null) {
+                    if (paciente.getSalida().equalsIgnoreCase("Alta")) {
+                        rbAlta.setSelected(true);
+                    } else {
+                        rbHospitalizacion.setSelected(true);
+                    }
+                } else {
+                    buttonGroup1.clearSelection();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Paciente no encontrado.");
+            }
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(this, "No hay un paciente seleccionado.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ocurrió un error al realizar la búsqueda.");
+        }
+    }//GEN-LAST:event_cbBuscarRegistroActionPerformed
+
+    private void cbBuscarEgresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbBuscarEgresoActionPerformed
+        try {
+            if (cargando) {
+                return;
+            } else if (cbBuscarEgreso.getSelectedItem() == null
+                    || cbBuscarEgreso.getSelectedIndex() == -1) {
+                return;
+            }
+            Paciente paciente = controlador.buscarPaciente(cbBuscarEgreso.getSelectedItem().toString());
+            if (paciente == null) {
+                JOptionPane.showMessageDialog(this, "Paciente no encontrado.");
+            } else if (paciente.getFechaEgreso() != null && !paciente.getFechaEgreso().trim().isEmpty()) {
+                java.util.Date fecha = new java.text.SimpleDateFormat("dd/MM/yyyy").parse(paciente.getFechaEgreso());
+                jdEgreso.setDate(fecha);
+                txtHoraEgreso2.setText(paciente.getHoraEgreso());
+                txtObservacionEgreso.setText(paciente.getObservacionesEgreso());
+            } else {
+                java.util.Date hoy = new java.util.Date();
+                jdEgreso.setDate(hoy);
+                txtHoraEgreso2.setText(controlador.horaActual());
+                txtObservacionEgreso.setText("");
+            }
+
+        } catch (java.text.ParseException e) {
+            jdEgreso.setDate(new java.util.Date());
+            txtHoraEgreso2.setText(controlador.horaActual());
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(this,"No hay un paciente seleccionado.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Ocurrió un error al cargar los datos del paciente.");
+        }
+    }//GEN-LAST:event_cbBuscarEgresoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -748,15 +1044,15 @@ public class Practica extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBuscarEgreso;
-    private javax.swing.JButton btnBuscarRegistro;
-    private javax.swing.JButton btnBuscarVista;
     private javax.swing.JButton btnDarAlta;
     private javax.swing.JButton btnGuardarIngreso;
     private javax.swing.JButton btnGuardarRegistro;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.JComboBox<String> cbBuscarEgreso;
+    private javax.swing.JComboBox<String> cbBuscarRegistro;
+    private javax.swing.JComboBox<String> cbBuscarVista;
     private javax.swing.JComboBox<String> cboGenero;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -767,7 +1063,12 @@ public class Practica extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -783,9 +1084,9 @@ public class Practica extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private com.toedter.calendar.JDateChooser jdEgreso;
     private com.toedter.calendar.JDateChooser jdIngreso;
     private com.toedter.calendar.JDateChooser jdNacimiento;
     private javax.swing.JRadioButton rbAlta;
@@ -794,9 +1095,6 @@ public class Practica extends javax.swing.JFrame {
     private javax.swing.JTextArea txtAlergias;
     private javax.swing.JTextField txtApellidoMaterno;
     private javax.swing.JTextField txtApellidoPaterno;
-    private javax.swing.JTextField txtBuscarEgreso;
-    private javax.swing.JTextField txtBuscarRegistro;
-    private javax.swing.JTextField txtBuscarVista;
     private javax.swing.JTextArea txtDiagnostico;
     private javax.swing.JTextField txtEdad;
     private javax.swing.JLabel txtHoraEgreso;
