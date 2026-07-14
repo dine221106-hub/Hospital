@@ -686,13 +686,7 @@ public class Practica extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Vista", jPanel4);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = -438;
-        gridBagConstraints.ipady = -419;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        getContentPane().add(jTabbedPane1, gridBagConstraints);
+        getContentPane().add(jTabbedPane1, new java.awt.GridBagConstraints());
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
